@@ -1,0 +1,216 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Streetz Game</title>
+    <style>
+        body {
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #000;
+            overflow: hidden;
+        }
+        canvas {
+            border: 2px solid #fff;
+        }
+        #game-over {
+            display: none;
+            text-align: center;
+            color: white;
+        }
+        #play-again-button {
+            padding: 10px 20px;
+            background-color: #f00;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div id="game-container" style="background-image: url('{% static 'img/background.jpeg' %}'); background-size: cover; background-position: center;">
+        <canvas id="gameCanvas"></canvas>
+    </div>
+    <div id="game-over">
+        <h1>Game Over</h1>
+        <p id="final-score">Final Score: 0</p>
+        <form id="score-form" method="POST" action="/submit_score/">
+            <input type="hidden" id="score-input" name="score" value="">
+        </form>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+
+        // Original character and bottle dimensions
+        const originalCharWidth = 70;
+        const originalCharHeight = 170;
+        const originalBottleWidth = 40;
+        const originalBottleHeight = 60;
+
+        let charX, charY;
+        let bottles = [];
+        let score = 0;
+        let lives = 3;
+        let dragging = false;
+        let dragOffsetX = 0;
+        let lastBottleTime = Date.now();
+        let gameStarted = false;
+
+        const charImage = new Image();
+        const bottleImage = new Image();
+        charImage.src = '{% static 'img/cartoon1.png' %}';
+        bottleImage.src = '{% static 'img/bottle1.png' %}';
+
+        function resetGame() {
+            updateCanvasSize();
+            score = 0;
+            lives = 3;
+            dragging = false;
+            dragOffsetX = 0;
+            bottles = [];
+            lastBottleTime = Date.now();
+            gameStarted = true;
+        }
+
+        function startGame() {
+            resetGame();
+            document.getElementById('game-container').style.display = 'block';
+            document.getElementById('game-over').style.display = 'none';
+            updateGame();
+        }
+
+        function endGame() {
+            gameStarted = false;
+            document.getElementById('game-container').style.display = 'none';
+            document.getElementById('game-over').style.display = 'block';
+            document.getElementById('final-score').textContent = `Final Score: ${score}`;
+            document.getElementById('score-input').value = score;
+            document.getElementById('score-form').submit();
+        }
+
+        function updateGame() {
+            if (gameStarted) {
+                const currentTime = Date.now();
+
+                if (currentTime - lastBottleTime > 800) {
+                    const bottleSpeed = Math.random() * 4 + 30;  
+                    const bottleX = Math.random() * (canvas.width - originalBottleWidth);
+                    bottles.push({ x: bottleX, y: -originalBottleHeight, speed: bottleSpeed });
+                    lastBottleTime = currentTime;
+                }
+
+                bottles.forEach((bottle, index) => {
+                    bottle.y += bottle.speed;
+                    if (bottle.y > canvas.height) {
+                        bottles.splice(index, 1);
+                        lives--;
+                        if (lives <= 0) {
+                            endGame();
+                        }
+                    }
+                });
+
+                bottles.forEach((bottle, index) => {
+                    if (
+                        charX < bottle.x + originalBottleWidth &&
+                        charX + originalCharWidth > bottle.x &&
+                        charY < bottle.y + originalBottleHeight &&
+                        charY + originalCharHeight > bottle.y
+                    ) {
+                        bottles.splice(index, 1);
+                        score++;
+                        if (score >= 30) {
+                            endGame();
+                        }
+                    }
+                });
+
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                // Draw character
+                ctx.drawImage(charImage, charX, charY, originalCharWidth, originalCharHeight);
+
+                // Draw bottles
+                bottles.forEach(bottle => {
+                    ctx.drawImage(bottleImage, bottle.x, bottle.y, originalBottleWidth, originalBottleHeight);
+                });
+
+                // Draw score and lives
+                ctx.fillStyle = 'white';
+                ctx.font = '20px Arial';
+                ctx.fillText(`Score: ${score}`, 10, 30);
+                ctx.fillStyle = 'red';
+                ctx.fillText(`Lives: ${lives}`, canvas.width - 100, 30);
+
+                requestAnimationFrame(updateGame);
+            }
+        }
+
+        // Update canvas size and character/bottle positions based on screen size
+        function updateCanvasSize() {
+            const scale = Math.min(window.innerWidth / 800, window.innerHeight / 600);
+            canvas.width = window.innerWidth * 0.9;
+            canvas.height = window.innerHeight * 0.8;
+
+            charX = canvas.width / 2 - originalCharWidth / 2;
+            charY = canvas.height - originalCharHeight - 20;
+        }
+
+        window.addEventListener('resize', updateCanvasSize);
+
+        // Handle dragging for character movement
+        canvas.addEventListener('mousedown', (event) => {
+            handleStart(event.offsetX, event.offsetY);
+        });
+
+        canvas.addEventListener('mousemove', (event) => {
+            handleMove(event.offsetX);
+        });
+
+        canvas.addEventListener('mouseup', () => {
+            dragging = false;
+        });
+
+        canvas.addEventListener('touchstart', (event) => {
+            const touch = event.touches[0];
+            const touchX = touch.clientX - canvas.getBoundingClientRect().left;
+            const touchY = touch.clientY - canvas.getBoundingClientRect().top;
+            handleStart(touchX, touchY);
+        });
+
+        canvas.addEventListener('touchmove', (event) => {
+            const touch = event.touches[0];
+            const touchX = touch.clientX - canvas.getBoundingClientRect().left;
+            handleMove(touchX);
+        });
+
+        canvas.addEventListener('touchend', () => {
+            dragging = false;
+        });
+
+        function handleStart(x, y) {
+            if (x >= charX && x <= charX + originalCharWidth && y >= charY && y <= charY + originalCharHeight) {
+                dragging = true;
+                dragOffsetX = x - charX;
+            }
+        }
+
+        function handleMove(x) {
+            if (dragging) {
+                charX = x - dragOffsetX;
+                if (charX < 0) charX = 0;
+                if (charX + originalCharWidth > canvas.width) charX = canvas.width - originalCharWidth;
+            }
+        }
+
+        startGame();
+    </script>
+</body>
+</html>

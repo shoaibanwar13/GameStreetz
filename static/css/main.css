@@ -1,0 +1,28 @@
+/* @font-face {
+    font-family: 'DK-Technojunk';
+    src: url('./DK-Technojunk.otf') format('opentype');
+} */
+
+@font-face {
+    font-family: 'FrenteH1';
+    src: url('./FrenteH1-Regular.otf') format('opentype');
+}
+
+@font-face {
+    font-family: 'Helvetica Neue';
+    src: url('./HelveticaNeue.ttc') format('truetype');
+}
+
+.font-frente{
+    font-family: 'FrenteH1';
+}
+.font-helvetica-neue{
+    font-family: 'Helvetica Neue';
+}
+.font-frente{
+    font-family: 'FrenteH1';
+}
+
+body {
+    font-family:  'FrenteH1', 'Helvetica Neue', sans-serif;
+}

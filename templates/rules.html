@@ -1,0 +1,65 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game Rules</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="{% static '/css/main.css' %}">
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen p-5">
+    <div class="bg-yellow-100 border max-h-[90vh] overflow-y-auto border-yellow-200 rounded-3xl p-6 max-w-md text-center shadow-md  uppercase font-semibold">
+        <button 
+          
+          class="absolute top-10 right-8 text-black text-2xl hover:text-gray-800"
+        >
+        <a href="/playgame/">
+            &#x2715; 
+        </a>
+        </button>
+        <h2 class="text-4xl font-bold mb-8 text-center " >GAME RULES</h2>
+        
+        <ol class="list-decimal list-inside text-1xl mb-8 font-helvetica-neue text-center" style="font-size:12px;line-height:1.3">
+          <li>Players get a total of three attempts to catch as much beers as possible for their friends.</li>
+          <li>If a player gets 30 or more beers, they will win (1) complimentary ticket to the festival.</li>
+          <li>Once a player has utilized all three attempts he/she will not be able to continue to play.</li>
+        </ol>
+
+        <h3 class="text-xl md:text-1xl font-bold mb-2 text-center font-helvetica-neue">
+            *TERMS OF SERVICE:*
+          </h3>
+          <p class="text-base md:text-lg mb-8 text-center font-helvetica-neue "  style="font-weight: normal; font-size:12px;line-height:1.3">
+            By playing, you agree to our terms and conditions.<br />
+            Game is intended for entertainment purposes only.<br />
+            Players must be 18+ years old.
+          </p>
+          
+
+        <h3 class="text-xl font-bold mb-2 text-center font-helvetica-neue" style="font-size:14px;line-height:1.3">*GAMEPLAY RULES:*</h3>
+        <p class="text-lg mb-8 text-center font-helvetica-neue "  style="font-weight: normal;font-size:12px;line-height:1.3">
+          Game is played as intended, without exploiting bugs or cheats.
+        </p>
+
+        <h3 class="text-xl font-bold mb-2 text-center font-helvetica-neue" style="font-size:14px;line-height:1.3">*INTELLECTUAL PROPERTY:*</h3>
+        <p class="text-lg mb-8 text-center font-helvetica-neue "  style="font-weight: normal; font-size:12px;line-height:1.3">
+          Game assets, logos, and trademarks are our property.<br />
+          No unauthorized use, reproduction, or distribution.<br />
+          We collect data for gameplay improvement and analytics.<br />
+          Personal data is handled according to our privacy policy.
+        </p>
+
+        <h3 class="text-xl font-bold mb-2 text-center font-helvetica-neue"style="font-size:14px;line-height:1.3">*DISCLAIMER:*</h3>
+        <p class="text-lg mb-8 text-center font-helvetica-neue "  style="font-weight: normal; font-size:12px;line-height:1.3">
+          Game is provided "as-is" without warranties.<br />
+          We're not liable for technical issues, losses, or damages.
+        </p>
+
+        <h3 class="text-xl font-bold mb-2 text-center font-helvetica-neue font-helvetica-neue " style="font-size:14px;line-height:1.3"   >*CONTACT US:*</h3>
+        <p class="text-lg text-center font-helvetica-neue " style="font-weight: normal;font-size:12px;line-height:1.3">
+          For support, feedback, or questions,<br />
+          email: streetzfestival@gmail.com
+        </p>
+    </div>
+</body>
+</html>
